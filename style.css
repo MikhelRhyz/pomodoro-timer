@@ -1,0 +1,68 @@
+/* --- Basic page layout --- */
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        padding: 2rem;
+      }
+
+      .pom-card {
+        width: 480px;
+        max-width: 95%;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(20, 30, 60, 0.08);
+        overflow: hidden;
+      }
+
+      /* --- Timer display --- */
+      .timer-display {
+        background: linear-gradient(180deg, #fff 0%, #f7fbff 100%);
+        padding: 2.25rem 1.5rem;
+        text-align: center;
+      }
+
+      .time-big {
+        font-size: 4.25rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.02em;
+      }
+
+      .session-label {
+        margin-top: 0.25rem;
+        font-weight: 600;
+        color: #475569;
+      }
+
+      /* --- Controls --- */
+      .controls {
+        padding: 1rem 1.25rem 1.5rem;
+      }
+
+      .btn-wide {
+        min-width: 92px;
+      }
+
+      .small-input {
+        max-width: 84px;
+      }
+
+      /* --- Progress bar --- */
+      .progress {
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      /* Accessibility focus states */
+      .form-control:focus, .btn:focus {
+        box-shadow: 0 0 0 0.15rem rgba(99,102,241,0.18);
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 420px) {
+        .time-big { font-size: 3.2rem; }
+      }
