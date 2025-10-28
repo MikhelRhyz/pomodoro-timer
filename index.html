@@ -143,7 +143,7 @@
             class="form-select form-select-sm"
             style="max-width: 180px"
           >
-            <option value="default">Default chime</option>
+            <option value="default" selected>Default chime</option>
             <option value="beep">Beep</option>
             <option value="none">No sound</option>
           </select>
@@ -165,9 +165,11 @@
     <!-- The JS you write can query these elements and call .play() when needed. -->
     <audio id="audioDefault" preload="auto" aria-hidden="true">
       <!-- Put a file URL here, e.g. <source src="/sounds/chime.mp3" type="audio/mpeg"> -->
+      <source src="sounds/chime.wav" type="audio/wav" />
     </audio>
     <audio id="audioBeep" preload="auto" aria-hidden="true">
       <!-- Put a file URL here, e.g. <source src="/sounds/beep.wav" type="audio/wav"> -->
+      <source src="sounds/beep.wav" type="audio/wav" />
     </audio>
 
     <!-- Bootstrap JS (optional) + Popper (for dropdowns) - included for completeness but your logic will be in separate JS file you create. -->
