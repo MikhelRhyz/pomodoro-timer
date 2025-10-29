@@ -12,13 +12,15 @@ let timer = undefined;
 let seconds = 0;
 
 startBtn.addEventListener("click", () => {
-    clearInterval(timer);
-    const workInputValue = Number(workInput.value);
-    seconds = workInputValue * 60;
-    timer = startTimer(timer, seconds);
-    paused = false;
-    cyclesBeforeLong.disabled = true;
+    startCountDown();
 });
+
+workInput.addEventListener("keydown", (e) => {
+    let key = e.key;
+    if (key === "Enter") {
+        startCountDown();
+    }
+})
 
 pauseBtn.addEventListener("click", () => {
 
@@ -43,5 +45,14 @@ resetBtn.addEventListener("click", () => {
     remainingTime.textContent = "00:00";
     paused = true;
     cyclesBeforeLong.disabled = false;
-    resetBtn.textContent = "Pause";
+    pauseBtn.textContent = "Pause";
 });
+
+function startCountDown() {
+    clearInterval(timer);
+    const workInputValue = Number(workInput.value);
+    seconds = workInputValue * 60;
+    timer = startTimer(timer, seconds);
+    paused = false;
+    cyclesBeforeLong.disabled = true;
+}
