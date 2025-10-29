@@ -19,7 +19,7 @@ export function startTimer(timer, seconds) {
     }
 
     timer = setInterval(() => {
-        if (seconds <= 0) {
+        if (seconds < 0) {
             clearInterval(timer);
             if (audioElement) audioElement.play();
             cycles--;
