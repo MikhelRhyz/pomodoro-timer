@@ -1,4 +1,5 @@
 import { startTimer } from "./startTimer.js";
+import { session, setSessionStatus } from "./state.js";
 
 const startBtn = document.querySelector("#startBtn");
 const pauseBtn = document.querySelector("#pauseBtn");
@@ -7,18 +8,23 @@ const workInput = document.querySelector("#workInput");
 const remainingTime = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
 let paused = true;
-
 let timer = undefined;
 let seconds = 0;
 
 startBtn.addEventListener("click", () => {
-    startCountDown();
+    if (session.status === "inactive") {
+        startCountDown();
+        setSessionStatus("active");
+    }
 });
 
 workInput.addEventListener("keydown", (e) => {
     let key = e.key;
     if (key === "Enter") {
-        startCountDown();
+        if (session.status === "inactive") {
+            startCountDown();
+            setSessionStatus("active");
+        }
     }
 })
 
@@ -30,12 +36,14 @@ pauseBtn.addEventListener("click", () => {
         numbers[0] = Number(numbers[0]);
         numbers[1] = Number(numbers[1]);
         const remainingSecs = (numbers[0] * 60) + numbers[1];
-        timer = startTimer(timer, remainingSecs);
+        timer = startTimer(timer, remainingSecs, session);
         pauseBtn.textContent = "Pause";
+        setSessionStatus("active");
         paused = false;
     } else {
         clearInterval(timer);
         paused = true;
+        setSessionStatus("inactive");
         pauseBtn.textContent = "Resume";
     }
 });
@@ -46,15 +54,19 @@ resetBtn.addEventListener("click", () => {
     paused = true;
     cyclesBeforeLong.disabled = false;
     pauseBtn.textContent = "Pause";
+    setSessionStatus("inactive");
 });
 
 function startCountDown() {
-    clearInterval(timer);
-    const workInputValue = Number(workInput.value);
-    seconds = workInputValue * 60;
-    timer = startTimer(timer, seconds);
-    paused = false;
-    cyclesBeforeLong.disabled = true;
+    if (session.status === "inactive") {
+        clearInterval(timer);
+        setSessionStatus("active");
+        const workInputValue = Number(workInput.value);
+        seconds = workInputValue * 60;
+        timer = startTimer(timer, seconds, session).timer;
+        paused = false;
+        cyclesBeforeLong.disabled = true;
+    }
 }
 
 const testSoundBtn = document.querySelector("#testSoundBtn");

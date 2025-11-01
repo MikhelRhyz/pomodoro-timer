@@ -1,15 +1,18 @@
+import { setSessionStatus } from "./state.js";
+
 const timeRemaining = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
 const progressBar = document.querySelector("#progressBar");
 let round = 0;
 
-export function startTimer(timer, seconds) {
+export function startTimer(timer, seconds, session) {
     const soundSelect = document.querySelector("#soundSelect");
     let audioElement;
     let cycles = cyclesBeforeLong.value;
     let originalCycle = cycles;
     let sessionCount = document.querySelector("#sessionCount");
     sessionCount.textContent = `${round} / ${cycles} completed`;
+    const shortBreak = document.querySelector("#shortBreakInput").value;
 
 
     if (soundSelect.value === "default") {
@@ -17,17 +20,19 @@ export function startTimer(timer, seconds) {
     } else if (soundSelect.value === "beep") {
         audioElement = document.querySelector("#audioBeep");
     }
-
     timer = setInterval(() => {
         if (seconds < 0) {
-            clearInterval(timer);
-            if (audioElement) audioElement.play();
-            cycles--;
-            cyclesBeforeLong.value = cycles;
-            round++;
-            progressBar.style.width = `${(round / originalCycle) * 100}%`;
-            sessionCount.textContent = `${round} / ${cycles} completed`;
-            return;
+            if (session.status === "active") {
+                clearInterval(timer);
+                if (audioElement) audioElement.play();
+                cycles--;
+                cyclesBeforeLong.value = cycles;
+                round++;
+                progressBar.style.width = `${(round / originalCycle) * 100}%`;
+                sessionCount.textContent = `${round} / ${cycles} completed`;
+                setSessionStatus("short-break");
+                return;
+            }
         }
 
         const min = String(Math.floor(seconds / 60));
@@ -37,5 +42,5 @@ export function startTimer(timer, seconds) {
 
     }, 1000);
 
-    return timer;
+    return { timer };
 }
