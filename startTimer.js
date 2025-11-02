@@ -4,17 +4,22 @@ const timeRemaining = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
 const progressBar = document.querySelector("#progressBar");
 let round = 1;
+let cycles = 0;
 const shortBreakInput = document.querySelector("#shortBreakInput");
 const workInput = document.querySelector("#workInput");
+const longBreakInput = document.querySelector("#longBreakInput");
+let sessionCount = document.querySelector("#sessionCount");
 
 export function startTimer(timer, seconds, session) {
+
     const soundSelect = document.querySelector("#soundSelect");
     let audioElement;
-    let cycles = cyclesBeforeLong.value;
+    cycles = cyclesBeforeLong.value;
     let originalCycle = cycles;
-    let sessionCount = document.querySelector("#sessionCount");
-    sessionCount.textContent = `${round} / ${cycles} completed`;
     const shortBreak = document.querySelector("#shortBreakInput").value;
+    if (session.status === "active") {
+        sessionCount.textContent = `${round - 1} / ${cycles} completed`;
+    }
 
 
     if (soundSelect.value === "default") {
@@ -37,6 +42,14 @@ export function startTimer(timer, seconds, session) {
                 round++;
                 if (audioElement) audioElement.play();
                 setSessionStatus("inactive");
+                changeTimeDisplay();
+                return;
+            } else if (round === 4) {
+                clearInterval(timer);
+                if (audioElement) audioElement.play();
+                progressBar.style.width = `${(round / originalCycle) * 100}%`;
+                sessionCount.textContent = `${round} / ${originalCycle} completed`;
+                setSessionStatus("long-break");
                 changeTimeDisplay();
                 return;
             }
@@ -63,6 +76,12 @@ function changeTimeDisplay() {
     } else if (session.status === "inactive") {
         const activeTime = Number(workInput.value);
         const sec = activeTime * 60;
+        const minRem = String(Math.floor(sec / 60)).padStart(2, "0");
+        const secRem = String(sec % 60).padStart(2, "0");
+        timeRemaining.textContent = `${minRem}:${secRem}`;
+    } else if (session.status === "long-break") {
+        const breakTime = Number(longBreakInput.value);
+        const sec = breakTime * 60;
         const minRem = String(Math.floor(sec / 60)).padStart(2, "0");
         const secRem = String(sec % 60).padStart(2, "0");
         timeRemaining.textContent = `${minRem}:${secRem}`;
