@@ -1,9 +1,11 @@
-import { setSessionStatus } from "./state.js";
+import { setSessionStatus, session } from "./state.js";
 
 const timeRemaining = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
 const progressBar = document.querySelector("#progressBar");
-let round = 0;
+let round = 1;
+const shortBreakInput = document.querySelector("#shortBreakInput");
+const workInput = document.querySelector("#workInput");
 
 export function startTimer(timer, seconds, session) {
     const soundSelect = document.querySelector("#soundSelect");
@@ -22,15 +24,20 @@ export function startTimer(timer, seconds, session) {
     }
     timer = setInterval(() => {
         if (seconds < 0) {
-            if (session.status === "active") {
+            if (session.status === "active" && round < 4) {
                 clearInterval(timer);
                 if (audioElement) audioElement.play();
-                cycles--;
-                cyclesBeforeLong.value = cycles;
-                round++;
                 progressBar.style.width = `${(round / originalCycle) * 100}%`;
-                sessionCount.textContent = `${round} / ${cycles} completed`;
+                sessionCount.textContent = `${round} / ${originalCycle} completed`;
                 setSessionStatus("short-break");
+                changeTimeDisplay();
+                return;
+            } else if (session.status === "short-break") {
+                clearInterval(timer);
+                round++;
+                if (audioElement) audioElement.play();
+                setSessionStatus("inactive");
+                changeTimeDisplay();
                 return;
             }
         }
@@ -39,8 +46,25 @@ export function startTimer(timer, seconds, session) {
         const sec = String(seconds % 60);
         seconds--;
         timeRemaining.textContent = `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
+        console.log(round);
 
     }, 1000);
 
     return { timer };
+}
+
+function changeTimeDisplay() {
+    if (session.status === "short-break") {
+        const breakTime = Number(shortBreakInput.value);
+        const sec = breakTime * 60;
+        const minRem = String(Math.floor(sec / 60)).padStart(2, "0");
+        const secRem = String(sec % 60).padStart(2, "0");
+        timeRemaining.textContent = `${minRem}:${secRem}`;
+    } else if (session.status === "inactive") {
+        const activeTime = Number(workInput.value);
+        const sec = activeTime * 60;
+        const minRem = String(Math.floor(sec / 60)).padStart(2, "0");
+        const secRem = String(sec % 60).padStart(2, "0");
+        timeRemaining.textContent = `${minRem}:${secRem}`;
+    }
 }

@@ -7,6 +7,7 @@ const resetBtn = document.querySelector("#resetBtn");
 const workInput = document.querySelector("#workInput");
 const remainingTime = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
+const shortBreakInput = document.querySelector("#shortBreakInput");
 let paused = true;
 let timer = undefined;
 let seconds = 0;
@@ -15,6 +16,8 @@ startBtn.addEventListener("click", () => {
     if (session.status === "inactive") {
         startCountDown();
         setSessionStatus("active");
+    } else if (session.status === "short-break") {
+        startCountDown();
     }
 });
 
@@ -63,6 +66,13 @@ function startCountDown() {
         setSessionStatus("active");
         const workInputValue = Number(workInput.value);
         seconds = workInputValue * 60;
+        timer = startTimer(timer, seconds, session).timer;
+        paused = false;
+        cyclesBeforeLong.disabled = true;
+    } else if (session.status === "short-break") {
+        clearInterval(timer);
+        const breakInputValue = Number(shortBreakInput.value);
+        seconds = breakInputValue * 60;
         timer = startTimer(timer, seconds, session).timer;
         paused = false;
         cyclesBeforeLong.disabled = true;
