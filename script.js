@@ -14,6 +14,7 @@ const pauseBtn = document.querySelector("#pauseBtn");
 const resetBtn = document.querySelector("#resetBtn");
 const remainingTime = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
+const notifyDesktop = document.querySelector("#notifyDesktop");
 
 startBtn.addEventListener("click", () => {
   if (session.status === "inactive") {
@@ -82,4 +83,16 @@ testSoundBtn.addEventListener("click", () => {
   }
 
   if (audioElement) audioElement.play();
+});
+
+notifyDesktop.addEventListener("change", async () => {
+  if (notifyDesktop.checked) {
+
+    const permission = await Notification.requestPermission();
+
+    if (Notification.permission !== "granted") {
+      notifyDesktop.checked = false;
+      alert("Permission denied to show desktop notifications.");
+    }
+  }
 });

@@ -10,6 +10,7 @@ const workInput = document.querySelector("#workInput");
 const longBreakInput = document.querySelector("#longBreakInput");
 let sessionCount = document.querySelector("#sessionCount");
 const autoStartNext = document.querySelector("#autoStartNext");
+const notifyDesktop = document.querySelector("#notifyDesktop");
 
 export function startTimer(timer, seconds, session) {
   const soundSelect = document.querySelector("#soundSelect");
@@ -34,6 +35,7 @@ export function startTimer(timer, seconds, session) {
         progressBar.style.width = `${(round / originalCycle) * 100}%`;
         sessionCount.textContent = `${round} / ${originalCycle} completed`;
         setSessionStatus("short-break");
+        notifyUser("Time for a short break!");
         changeTimeDisplay();
         if (autoStartNext.checked) {
           startCountDown();
@@ -44,6 +46,7 @@ export function startTimer(timer, seconds, session) {
         round++;
         if (audioElement) audioElement.play();
         setSessionStatus("inactive");
+        notifyUser("Break over! Time to get back to work.");
         changeTimeDisplay();
         if (autoStartNext.checked) {
           startCountDown();
@@ -55,6 +58,7 @@ export function startTimer(timer, seconds, session) {
         progressBar.style.width = `${(round / originalCycle) * 100}%`;
         sessionCount.textContent = `${round} / ${originalCycle} completed`;
         setSessionStatus("long-break");
+        notifyUser("Time for a long break!");
         changeTimeDisplay();
         if (autoStartNext.checked) {
           startCountDown();
@@ -67,6 +71,7 @@ export function startTimer(timer, seconds, session) {
         progressBar.style.width = "0%";
         sessionCount.textContent = `${round - 1} / ${originalCycle} completed`;
         setSessionStatus("inactive");
+        notifyUser("Long break over! Time to get back to work.");
         cyclesBeforeLong.disabled = false;
         autoStartNext.disabled = false;
         changeTimeDisplay();
@@ -106,5 +111,13 @@ function changeTimeDisplay() {
     const minRem = String(Math.floor(sec / 60)).padStart(2, "0");
     const secRem = String(sec % 60).padStart(2, "0");
     timeRemaining.textContent = `${minRem}:${secRem}`;
+  }
+}
+
+function notifyUser(text) {
+  if (notifyDesktop.checked && Notification.permission === "granted") {
+    new Notification("Pomodoro Timer", {
+      body: text,
+    });
   }
 }
