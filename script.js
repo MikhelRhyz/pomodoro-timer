@@ -8,6 +8,7 @@ const workInput = document.querySelector("#workInput");
 const remainingTime = document.querySelector("#timeRemaining");
 const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
 const shortBreakInput = document.querySelector("#shortBreakInput");
+const longBreakInput = document.querySelector("#longBreakInput");
 let paused = true;
 let timer = undefined;
 let seconds = 0;
@@ -18,15 +19,21 @@ startBtn.addEventListener("click", () => {
         setSessionStatus("active");
     } else if (session.status === "short-break") {
         startCountDown();
+    } else if (session.status === "long-break") {
+        startCountDown();
     }
 });
 
-workInput.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", (e) => {
     let key = e.key;
     if (key === "Enter") {
         if (session.status === "inactive") {
             startCountDown();
             setSessionStatus("active");
+        } else if (session.status === "short-break") {
+            startCountDown();
+        } else if (session.status === "long-break") {
+            startCountDown();
         }
     }
 })
@@ -72,6 +79,13 @@ function startCountDown() {
     } else if (session.status === "short-break") {
         clearInterval(timer);
         const breakInputValue = Number(shortBreakInput.value);
+        seconds = breakInputValue * 60;
+        timer = startTimer(timer, seconds, session).timer;
+        paused = false;
+        cyclesBeforeLong.disabled = true;
+    } else if (session.status === "long-break") {
+        clearInterval(timer);
+        const breakInputValue = Number(longBreakInput.value);
         seconds = breakInputValue * 60;
         timer = startTimer(timer, seconds, session).timer;
         paused = false;

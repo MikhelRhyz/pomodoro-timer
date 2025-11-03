@@ -44,12 +44,22 @@ export function startTimer(timer, seconds, session) {
                 setSessionStatus("inactive");
                 changeTimeDisplay();
                 return;
-            } else if (round === 4) {
+            } else if (session.status === "active" && round === 4) {
                 clearInterval(timer);
                 if (audioElement) audioElement.play();
                 progressBar.style.width = `${(round / originalCycle) * 100}%`;
                 sessionCount.textContent = `${round} / ${originalCycle} completed`;
                 setSessionStatus("long-break");
+                changeTimeDisplay();
+                return;
+            } else if (session.status === "long-break") {
+                clearInterval(timer);
+                round = 1;
+                if (audioElement) audioElement.play();
+                progressBar.style.width = "0%";
+                sessionCount.textContent = `${round - 1} / ${originalCycle} completed`;
+                setSessionStatus("inactive");
+                cyclesBeforeLong.disabled = false;
                 changeTimeDisplay();
                 return;
             }
