@@ -17,7 +17,7 @@ export function startTimer(timer, seconds, session) {
   let audioElement;
   cycles = cyclesBeforeLong.value;
   let originalCycle = cycles;
-  const shortBreak = document.querySelector("#shortBreakInput").value;
+
   if (session.status === "active") {
     sessionCount.textContent = `${round - 1} / ${cycles} completed`;
   }
@@ -26,10 +26,13 @@ export function startTimer(timer, seconds, session) {
     audioElement = document.querySelector("#audioDefault");
   } else if (soundSelect.value === "beep") {
     audioElement = document.querySelector("#audioBeep");
+  } else if (soundSelect.value === "none") {
+    audioElement = null; // explicitly no sound
   }
+
   timer = setInterval(() => {
     if (seconds < 0) {
-      if (session.status === "active" && round < 4) {
+      if (session.status === "active" && round < cycles) {
         clearInterval(timer);
         if (audioElement) audioElement.play();
         progressBar.style.width = `${(round / originalCycle) * 100}%`;
@@ -52,7 +55,7 @@ export function startTimer(timer, seconds, session) {
           startCountDown();
         }
         return;
-      } else if (session.status === "active" && round === 4) {
+      } else if (session.status === "active" && round === cycles) {
         clearInterval(timer);
         if (audioElement) audioElement.play();
         progressBar.style.width = `${(round / originalCycle) * 100}%`;
@@ -120,4 +123,8 @@ function notifyUser(text) {
       body: text,
     });
   }
+}
+
+export function resetRounds() {
+  round = 1;
 }

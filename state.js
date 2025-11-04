@@ -1,14 +1,16 @@
 import { startTimer } from "./startTimer.js";
 
 export let session = { status: "inactive" };
-export let timer = { status: undefined };
-export let paused = { status: false };
+export let timer = undefined;
+export let paused = { status: true };
 
 const workInput = document.querySelector("#workInput");
 const shortBreakInput = document.querySelector("#shortBreakInput");
 const longBreakInput = document.querySelector("#longBreakInput");
 let seconds = 0;
 const autoStartEl = document.querySelector("#autoStartNext");
+const cyclesBeforeLong = document.querySelector("#cyclesBeforeLong");
+
 
 export function setSessionStatus(val) {
   session.status = val;
@@ -43,9 +45,13 @@ export function startCountDown() {
 }
 
 export function setTimer(val) {
-  timer.status = val;
+  timer = val;
 }
 
 export function setPaused(val) {
   paused.status = val;
+}
+
+export function clearTimer() {
+  clearInterval(timer);
 }

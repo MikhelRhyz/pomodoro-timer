@@ -1,4 +1,4 @@
-import { startTimer } from "./startTimer.js";
+import { startTimer, resetRounds } from "./startTimer.js";
 import {
   session,
   setSessionStatus,
@@ -7,6 +7,7 @@ import {
   timer,
   paused,
   setPaused,
+  clearTimer,
 } from "./state.js";
 
 const startBtn = document.querySelector("#startBtn");
@@ -19,7 +20,6 @@ const notifyDesktop = document.querySelector("#notifyDesktop");
 startBtn.addEventListener("click", () => {
   if (session.status === "inactive") {
     startCountDown();
-    setSessionStatus("active");
   } else if (session.status === "short-break") {
     startCountDown();
   } else if (session.status === "long-break") {
@@ -42,32 +42,31 @@ document.addEventListener("keydown", (e) => {
 });
 
 pauseBtn.addEventListener("click", () => {
-  if (paused.status) {
-    let remainingTimeValue = remainingTime.textContent;
-    const numbers = remainingTimeValue.split(":");
-    numbers[0] = Number(numbers[0]);
-    numbers[1] = Number(numbers[1]);
-    const remainingSecs = numbers[0] * 60 + numbers[1];
-    setTimer(startTimer(timer.status, remainingSecs, session));
-    // timer = startTimer(timer, remainingSecs, session);
-    pauseBtn.textContent = "Pause";
-    setSessionStatus("active");
-    setPaused(false);
-  } else {
-    clearInterval(timer.status);
-    setPaused(true);
-    setSessionStatus("inactive");
-    pauseBtn.textContent = "Resume";
-  }
-});
+  // If there's no running timer and we're currently "paused", do nothing.
+  if (timer === undefined && paused.status) return;
 
-resetBtn.addEventListener("click", () => {
-  clearInterval(timer.status);
-  remainingTime.textContent = "00:00";
+  // If currently paused -> resume
+  if (paused.status) {
+    // compute remaining seconds from the visible display
+    const remainingTimeValue = remainingTime.textContent;
+    const numbers = remainingTimeValue.split(":").map((n) => Number(n));
+    const remainingSecs = numbers[0] * 60 + numbers[1];
+
+    // start/resume the timer and store reference in state
+    const result = startTimer(timer, remainingSecs, session);
+    setTimer(result.timer);
+
+    setPaused(false);
+    setSessionStatus("active");
+    pauseBtn.textContent = "Pause";
+    return;
+  }
+
+  // Otherwise (not paused) -> pause
+  clearTimer(); // stops interval stored in state.timer
   setPaused(true);
-  cyclesBeforeLong.disabled = false;
-  pauseBtn.textContent = "Pause";
   setSessionStatus("inactive");
+  pauseBtn.textContent = "Resume";
 });
 
 const testSoundBtn = document.querySelector("#testSoundBtn");
@@ -87,7 +86,6 @@ testSoundBtn.addEventListener("click", () => {
 
 notifyDesktop.addEventListener("change", async () => {
   if (notifyDesktop.checked) {
-
     const permission = await Notification.requestPermission();
 
     if (Notification.permission !== "granted") {
