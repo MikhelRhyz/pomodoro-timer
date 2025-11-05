@@ -69,6 +69,16 @@ pauseBtn.addEventListener("click", () => {
   pauseBtn.textContent = "Resume";
 });
 
+resetBtn.addEventListener("click", () => {
+  clearTimer();
+  setSessionStatus("inactive");
+  resetRounds();
+  remainingTime.textContent = "00:00";
+  cyclesBeforeLong.disabled = false;
+  paused.status = true;
+  pauseBtn.textContent = "Pause";
+});
+
 const testSoundBtn = document.querySelector("#testSoundBtn");
 
 testSoundBtn.addEventListener("click", () => {

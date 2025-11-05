@@ -15,7 +15,7 @@ const notifyDesktop = document.querySelector("#notifyDesktop");
 export function startTimer(timer, seconds, session) {
   const soundSelect = document.querySelector("#soundSelect");
   let audioElement;
-  cycles = cyclesBeforeLong.value;
+  cycles = Number(cyclesBeforeLong.value);
   let originalCycle = cycles;
 
   if (session.status === "active") {
@@ -32,6 +32,14 @@ export function startTimer(timer, seconds, session) {
 
   timer = setInterval(() => {
     if (seconds < 0) {
+      console.log(
+        "session",
+        session.status,
+        " round: ",
+        round,
+        " cycles: ",
+        cycles
+      );
       if (session.status === "active" && round < cycles) {
         clearInterval(timer);
         if (audioElement) audioElement.play();
